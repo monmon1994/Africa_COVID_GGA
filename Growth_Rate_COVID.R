@@ -26,7 +26,7 @@ recover_c <- "#7FBC41"
 confirm_c <- "#4393C3" 
 
 df_days_since <- df_afr %>%
-    filter(confirmed > 100) %>% 
+    filter(confirmed > 100, recovered > 100) %>% 
     group_by(country) %>%
     mutate(days_since_100 = as.numeric(date - min(date))) %>%
     ungroup 
@@ -152,3 +152,62 @@ df_days_since %>%
     labs(title = "Growth rate of confirmed cases in Ethiopia", x = "Days since the 100th confirmed case", y = "log scale",
          caption = "Source: Johns Hopkins University Center for Systems Science and Engineering (JHU CSSE) 31 May, 2020
   Graphic: Monique Bennett at Good Governance Africa")
+
+## Facetwrap confirmed cases
+
+df_days_since %>% 
+    ggplot(aes(group = country)) +
+    geom_line(aes(x = days_since_100, y = confirmed), size = 1, linetype = 1, col = "#005935") +
+    gghighlight::gghighlight(use_direct_label = FALSE,unhighlighted_params = list(size=0.4))+
+    #scale_x_date(date_breaks = "7 days", date_labels = "%e-%b") +
+    scale_y_log10(labels = comma_format()) +
+    labs(x = "Days since 100th case", y = "Confirmed cases (log scale)", 
+    caption = "Source: Johns Hopkins University Center for Systems Science and Engineering (JHU CSSE),
+Data obtained on 9 July, 2020.
+Graphic: Monique Bennett", 
+         title = "Comparing six Sub-Saharan African countries coronavirus case trajectories",
+    subtitle = "Cumulative number of confirmed cases, by number of days since 100th case.") +
+    theme(panel.background = element_blank(),
+          text = element_text(family = "Helvetica", size = 13),
+          panel.grid.major = element_line(colour = "#f0f0f0"),
+          panel.grid.minor = element_blank(),
+          axis.ticks = element_blank(),
+          strip.background = element_rect(fill = "#f5f5f5"),
+          plot.background = element_blank(),
+          strip.text.x = element_text(hjust = 0),
+          plot.caption = element_text(hjust = 0),
+          plot.caption.position = "plot",
+          plot.title = element_text(size = 20), plot.title.position = "plot") +
+    facet_wrap(~country, ncol = 2, scales = "free") 
+
+ggsave("growth_rate_five.png", dpi = 600, width = 10, height = 8)\
+
+##fect recoveries
+
+df_days_since %>% 
+    ggplot(aes(group = country)) +
+    geom_line(aes(x = days_since_100, y = recovered), size = 1, linetype = 1, col = "#3a4971") +
+    gghighlight::gghighlight(use_direct_label = FALSE,unhighlighted_params = list(size=0.4))+
+    #scale_x_date(date_breaks = "7 days", date_labels = "%e-%b") +
+    scale_y_log10(labels = comma_format()) +
+    labs(x = "Days since 100th case", y = "Recovered cases (log scale)", 
+         caption = "Source: Johns Hopkins University Center for Systems Science and Engineering (JHU CSSE),
+Data obtained on 9 July, 2020.
+Graphic: Monique Bennett", 
+         title = "The recovery rate of coronavirus cases across six Sub-Saharan African countries",
+         subtitle = "Cumulative number of recovered cases, by number of days since 100th case.") +
+    theme(panel.background = element_blank(),
+          text = element_text(family = "Helvetica", size = 13),
+          panel.grid.major = element_line(colour = "#f0f0f0"),
+          panel.grid.minor = element_blank(),
+          axis.ticks = element_blank(),
+          strip.background = element_rect(fill = "#f5f5f5"),
+          plot.background = element_blank(),
+          strip.text.x = element_text(hjust = 0),
+          plot.caption = element_text(hjust = 0),
+          plot.caption.position = "plot",
+          plot.title = element_text(size = 18), plot.title.position = "plot") +
+    facet_wrap(~country, ncol = 2, scales = "free") 
+
+ggsave("recovery_growth_rate.png", dpi = 600, width = 10, height = 8)
+
