@@ -252,27 +252,27 @@ df_afr %>%
   ggplot() +
   geom_line(aes(x = date, y = confirmed), size = 1, linetype = 1, col = confirm_c) +
   geom_line(aes(x = date, y = recovered), size = 1, linetype = 5, col = recover_c) +
-  scale_x_date(date_breaks = "7 days", date_labels = "%e-%b") +
-  scale_y_continuous(breaks = scales::pretty_breaks(10)) +
-  annotate("text", x = as.Date("2020-05-21"), y = 56, label = "Confirmed",
-           hjust = 0.5, vjust = -0.5, family = "Helvetica", size = 6) +
-  annotate("text", x = as.Date("2020-05-24"), y = 25, label = "Recoveries",
-           hjust = 0.8, vjust = -0.4, family = "Helvetica", size = 6) +
-  annotate("text", x = as.Date("2020-03-23"), y = 10, label = "Restriction on internal movement",
-           family = "Helvetica", size = 3.5, vjust = -0.3, hjust = 0.4) +
-  annotate(geom = "segment", x = as.Date("2020-03-18"), y = 10, 
-           xend = as.Date("2020-03-23"), yend = 3, 
-           arrow = arrow(length = unit(0.2, "cm"), type = "closed")) +
-  annotate("text", x = as.Date("2020-03-27"), y = 15, label = "Stay-at-home required and lockdown announced",
-           family = "Helvetica", size = 3.5, vjust = -0.4, hjust = 0.4) +
-  annotate(geom = "curve", x = as.Date("2020-03-27"), y = 15, xend = as.Date("2020-03-27"), yend = 5, 
-           curvature = .2, arrow = arrow(length = unit(2, "mm"), type = "closed")) +
-  annotate("text", x = as.Date("2020-04-01"), y = 50, 
-           label = paste(strwrap("Testing only for those who both (a) have symptoms AND 
-                        (b) meet specific criteria. Limited tracing (only some cases).", 40), collapse = "\n"),
-           family = "Helvetica", size = 4) +
-  annotate("rect", xmin = as.Date("2020-03-19"), ymin = 44, xmax = as.Date('2020-04-14'), ymax = 55,
-           alpha = 0.4, color = "gray", fill = "#666666") +
+  scale_x_date(date_breaks = "2 weeks", date_labels = "%e-%b") +
+  scale_y_continuous(breaks = scales::pretty_breaks(10)) + 
+  annotate("text", x = as.Date("2020-07-16"), y = 1478, label = "Confirmed",
+           hjust = 0.5, vjust = -0.5, family = "Helvetica", size = 4) +
+  annotate("text", x = as.Date("2020-07-16"), y = 439, label = "Recoveries",
+           hjust = 0.8, vjust = -0.4, family = "Helvetica", size = 4) +
+  #annotate("text", x = as.Date("2020-03-23"), y = , label = "Restriction on internal movement",
+   #        family = "Helvetica", size = 3.5, vjust = -0.3, hjust = 0.4) +
+  #annotate(geom = "segment", x = as.Date("2020-03-18"), y = 10, 
+  #         xend = as.Date("2020-03-23"), yend = 3, 
+  #        arrow = arrow(length = unit(0.2, "cm"), type = "closed")) +
+  #annotate("text", x = as.Date("2020-03-27"), y = 15, label = "Stay-at-home required and lockdown announced",
+  #         family = "Helvetica", size = 3.5, vjust = -0.4, hjust = 0.4) +
+  #annotate(geom = "curve", x = as.Date("2020-03-27"), y = 15, xend = as.Date("2020-03-27"), yend = 5, 
+   #        curvature = .2, arrow = arrow(length = unit(2, "mm"), type = "closed")) +
+  #annotate("text", x = as.Date("2020-04-01"), y = 50, 
+  #         label = paste(strwrap("Testing only for those who both (a) have symptoms AND 
+  #                      (b) meet specific criteria. Limited tracing (only some cases).", 40), collapse = "\n"),
+   #        family = "Helvetica", size = 4) +
+ # annotate("rect", xmin = as.Date("2020-03-19"), ymin = 44, xmax = as.Date('2020-04-14'), ymax = 55,
+  #         alpha = 0.4, color = "gray", fill = "#666666") +
   theme(panel.background = element_rect(fill = "#f5f5f5"),
         text = element_text(family = "Helvetica"),
         panel.grid.major = element_line(colour = "#f0f0f0"),
@@ -280,13 +280,46 @@ df_afr %>%
         strip.background = element_rect(fill = "#f5f5f5"),
         plot.background = element_rect(fill = "#f5f5f5"),
         strip.text.x = element_text(hjust = 0),
-        plot.caption = element_text(hjust = 0), plot.title = element_text(size = 20)) +
-  labs(title = "Zimbabwe", x = "", y = "", 
-       caption = "Source: Johns Hopkins University Center for Systems Science and Engineering (JHU CSSE) 25 May, 2020
-  Graphic: Monique Bennett at @GoodGovernanceAfrica")
+        plot.caption = element_text(hjust = 0), 
+        plot.title = element_text(size = 14, hjust = 0),
+        plot.caption.position = "plot") +
+  labs(title = "Cumulative number of COVID-19 cases in Zimbabwe since the start of the outbreak", 
+       x = "", y = "Number of cases", 
+       caption = "Source: Johns Hopkins University Center for Systems Science and Engineering (JHU CSSE) 17 July, 2020
+Graphic: Monique Bennett at Good Governance Africa")
 
-ggsave("ZWE.png", plot = last_plot(), dpi = 400, height = 8, width = 8)
+ggsave("ZWE.png", plot = last_plot(), dpi = 600, height = 8, width = 8)
 
+
+##log scale
+
+
+df_afr %>% 
+  filter(iso3c == "ZWE") %>% 
+  filter(date > "2020-03-20") %>% 
+  ggplot() +
+  geom_line(aes(x = date, y = confirmed), size = 1, linetype = 1, col = confirm_c) +
+  geom_line(aes(x = date, y = recovered), size = 1, linetype = 5, col = recover_c) +
+  scale_x_date(date_breaks = "2 weeks", date_labels = "%e-%b") +
+  scale_y_log10() + 
+  annotate("text", x = as.Date("2020-07-16"), y = 1478, label = "Confirmed",
+           hjust = 0.5, vjust = -0.5, family = "Helvetica", size = 6) +
+  annotate("text", x = as.Date("2020-07-16"), y = 439, label = "Recoveries",
+           hjust = 0.8, vjust = -0.4, family = "Helvetica", size = 6) +
+theme(panel.background = element_rect(fill = "#f5f5f5"),
+      text = element_text(family = "Helvetica"),
+      panel.grid.major = element_line(colour = "#f0f0f0"),
+      panel.grid.minor = element_blank(),
+      strip.background = element_rect(fill = "#f5f5f5"),
+      plot.background = element_rect(fill = "#f5f5f5"),
+      strip.text.x = element_text(hjust = 0),
+      plot.caption = element_text(hjust = 0), 
+      plot.title = element_text(size = 18, hjust = 0),
+      plot.caption.position = "plot") +
+  labs(title = "Cumulative number of COVID-19 cases in Zimbabwe since the start of the outbreak", 
+       x = "", y = "Number of cases", 
+       caption = "Source: Johns Hopkins University Center for Systems Science and Engineering (JHU CSSE) 17 July, 2020
+Graphic: Monique Bennett at Good Governance Africa")
 ## South Africa
 
 df_afr %>% 
